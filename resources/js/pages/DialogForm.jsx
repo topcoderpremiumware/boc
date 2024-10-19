@@ -14,7 +14,8 @@ import {VisuallyHiddenInput} from "../components/VisuallyHiddenInput.jsx";
 export function DialogForm() {
   const [userId, setUserId] = useState(null);
   const [message, setMessage] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{ role : 'assistant',
+    content : "Hello! Welcome to our banking services. I'm here to help you with any financial questions you may have, whether you're looking to apply for a loan, explore installment payment options for purchases, or need advice on any other banking matters. Let's make sure we find the best solution for your needs. Could you please share your name so we can get started?"}]);
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null)

@@ -49,28 +49,39 @@ const Shop = () => {
       const client_id = "4c13ca5d5234603dfb3228c381d7d3ac";
       const client_secret = "4c13ca5d5234603dfb3228c381d7d3ac";
       
+      // Create the request payload for form-urlencoded data
+      const requestBody = new URLSearchParams();
+      requestBody.append("grant_type", "client_credentials");
+      requestBody.append("client_id", client_id);
+      requestBody.append("client_secret", client_secret);
+      requestBody.append("scope", "TPPOAuth2Security");
+      
       // Make the API call to get the OAuth token
-      const response = await axios.post(tokenUrl, null, {
+      const response = await axios.post(tokenUrl, requestBody.toString(), {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        data: `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}&scope=TPPOAuth2Security`
       });
-
+  
       // Extract token from response
       const accessToken = response.data.access_token;
-
+  
+      if (!accessToken) {
+        throw new Error("No access token received.");
+      }
+  
       // You can now use the token to call other BOC APIs.
       alert(`Proceeding to buy ${product.name} by BOC with token: ${accessToken}`);
       
       // Perform further actions like calling other BOC APIs with the token
       // Example API call using the token can go here
-
+  
     } catch (error) {
       console.error("Error fetching token:", error);
       alert(`Failed to proceed with BOC purchase: ${error.message}`);
     }
   };
+  
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around" }}>
