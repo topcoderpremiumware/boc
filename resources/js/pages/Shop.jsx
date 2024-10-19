@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-// Example data for the products
 const products = [
   {
     id: 1,
     name: "Samsonite Winfield 2 Hardside Luggage",
     price: 199.99,
     oldPrice: 249.99,
-    img: "https://m.media-amazon.com/images/I/91-rQ9sAQeL._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81clKJPeHtL._AC_SL1500_.jpg", // Updated
     discount: 20,
     colors: ["black", "silver", "blue"],
   },
@@ -17,7 +16,7 @@ const products = [
     name: "Levi's Men's 501 Original Fit Jeans",
     price: 49.99,
     oldPrice: 59.99,
-    img: "https://m.media-amazon.com/images/I/91sJZuVUIeL._AC_UL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81z1SQ4J3cL._AC_UL1500_.jpg", // Updated
     discount: 16,
     colors: ["blue", "black", "gray"],
   },
@@ -26,7 +25,7 @@ const products = [
     name: "Nike Air Max 270",
     price: 149.95,
     oldPrice: 170.00,
-    img: "https://m.media-amazon.com/images/I/71wEKbyyqXL._AC_UL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/61cS0cF7yXL._AC_UL1500_.jpg", // Updated
     discount: 12,
     colors: ["white", "black", "red"],
   },
@@ -35,7 +34,7 @@ const products = [
     name: "Apple MacBook Air 13-inch",
     price: 999.00,
     oldPrice: 1099.00,
-    img: "https://m.media-amazon.com/images/I/71TPda7cwUL._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81Yj49MZDhL._AC_SL1500_.jpg", // Updated
     discount: 9,
     colors: ["silver", "space gray", "gold"],
   },
@@ -44,7 +43,7 @@ const products = [
     name: "Sony WH-1000XM5 Wireless Headphones",
     price: 349.99,
     oldPrice: 399.99,
-    img: "https://m.media-amazon.com/images/I/81dGBuq5GWL._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81sB1l4wQjL._AC_SL1500_.jpg", // Updated
     discount: 12,
     colors: ["black", "silver"],
   },
@@ -53,7 +52,7 @@ const products = [
     name: "Canon EOS Rebel T7 DSLR Camera",
     price: 479.00,
     oldPrice: 549.00,
-    img: "https://m.media-amazon.com/images/I/81+sM9QQzFL._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81qHW7bLl5L._AC_SL1500_.jpg", // Updated
     discount: 13,
     colors: ["black"],
   },
@@ -62,7 +61,7 @@ const products = [
     name: "Fossil Men's Nate Stainless Steel Chronograph Watch",
     price: 129.99,
     oldPrice: 149.99,
-    img: "https://m.media-amazon.com/images/I/81XuU5rS-KL._AC_UL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81aP+63ibcL._AC_SL1500_.jpg", // Updated
     discount: 13,
     colors: ["black", "silver"],
   },
@@ -71,7 +70,7 @@ const products = [
     name: "Dyson V11 Torque Drive Cordless Vacuum Cleaner",
     price: 599.99,
     oldPrice: 699.99,
-    img: "https://m.media-amazon.com/images/I/71Cty5snVxL._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/61ZRmB9DqUL._AC_SL1500_.jpg", // Updated
     discount: 14,
     colors: ["blue"],
   },
@@ -80,7 +79,7 @@ const products = [
     name: "Samsung 55-inch Class QLED Q60T Smart TV",
     price: 497.99,
     oldPrice: 599.99,
-    img: "https://m.media-amazon.com/images/I/91ukc2wlf-L._AC_SL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81Hhrm63NCL._AC_SL1500_.jpg", // Updated
     discount: 17,
     colors: ["black"],
   },
@@ -89,7 +88,7 @@ const products = [
     name: "Adidas Ultraboost 21 Running Shoes",
     price: 179.95,
     oldPrice: 200.00,
-    img: "https://m.media-amazon.com/images/I/91yE+8ogArL._AC_UL1500_.jpg",
+    img: "https://m.media-amazon.com/images/I/81U3FZ1EbFL._AC_SL1500_.jpg", // Updated
     discount: 10,
     colors: ["white", "black", "gray"],
   },
@@ -105,42 +104,34 @@ const Shop = () => {
 
   const buyByBOC = async (product) => {
     try {
-      // API URL for getting the token
       const tokenUrl = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/token";
-      
-      // Credentials (replace these with your actual client id and secret)
       const client_id = "4c13ca5d5234603dfb3228c381d7d3ac";
       const client_secret = "4c13ca5d5234603dfb3228c381d7d3ac";
-      
-      // Create the request payload for form-urlencoded data
+  
       const requestBody = new URLSearchParams();
       requestBody.append("grant_type", "client_credentials");
       requestBody.append("client_id", client_id);
       requestBody.append("client_secret", client_secret);
       requestBody.append("scope", "TPPOAuth2Security");
-      
-      // Make the API call to get the OAuth token
+  
       const response = await axios.post(tokenUrl, requestBody.toString(), {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
   
-      // Extract token from response
       const accessToken = response.data.access_token;
   
       if (!accessToken) {
         throw new Error("No access token received.");
       }
   
-      // You can now use the token to call other BOC APIs.
       alert(`Proceeding to buy ${product.name} by BOC with token: ${accessToken}`);
-      
-      // Perform further actions like calling other BOC APIs with the token
+  
       // Example API call using the token can go here
   
     } catch (error) {
-      console.error("Error fetching token:", error);
+      console.error("Error fetching token:", error.response ? error.response.data : error.message);
       alert(`Failed to proceed with BOC purchase: ${error.message}`);
     }
   };
