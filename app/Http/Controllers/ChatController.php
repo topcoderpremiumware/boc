@@ -41,6 +41,11 @@ class ChatController extends Controller
     public function getBocData(Request $request){
         $token = BocGateway::getToken();
         $result = BocGateway::createSubscription($token,time(),"9687567465");
-        return response()->json($result);
+        $subscriptionId = $result['subscriptionId'];
+        // $patchSubscription = BocGateway::patchSubscription($token,$subscriptionId,time(),"9687567465");
+
+        // $account = BocGateway::getAccounts($token,$subscriptionId,time(),"9687567465");
+        return response()->json($token);
+
     }
 }

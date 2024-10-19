@@ -40,7 +40,7 @@ class BocGateway
     }
 
 
-    function createSubscription($oauthToken, $timestamp, $guid) {
+    public static function createSubscription($oauthToken, $timestamp, $guid) {
         $client = new Client();
     
         // Prepare the request data
@@ -68,6 +68,95 @@ class BocGateway
                     'journeyId' => $guid,
                 ],
                 'json' => $data // Automatically converts to JSON
+            ]);
+    
+            // Handle the successful response
+            $responseBody = json_decode($response->getBody(), true);
+            return $responseBody;
+    
+        } catch (RequestException $e) {
+            // Handle the error response
+            if ($e->hasResponse()) {
+                $errorResponse = $e->getResponse();
+                return [
+                    'error' => true,
+                    'message' => json_decode($errorResponse->getBody(), true),
+                    'status' => $errorResponse->getStatusCode(),
+                ];
+            }
+    
+            return [
+                'error' => true,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public static function patchSubscription($subscriptionId, $oauthToken, $timestamp, $guid) {
+        $client = new Client();
+    
+        // Data to be sent in the PATCH request
+        $data = [
+            "accounts" => [
+                "transactionHistory" => true,
+                "balance" => true,
+                "details" => true,
+                "checkFundsAvailability" => true,
+            ],
+            "payments" => [
+                "limit" => 50,
+                "currency" => "EUR", // Replace "string" with the actual currency
+                "amount" => 50,
+            ],
+        ];
+    
+        try {
+            // Send the PATCH request
+            $response = $client->patch("https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/subscriptions/{$subscriptionId}", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $oauthToken,
+                    'Content-Type' => 'application/json',
+                    'journeyId' => $guid,
+                    'timestamp' => $timestamp,
+                ],
+                'json' => $data, // Use 'json' to automatically set Content-Type to application/json
+            ]);
+    
+            // Handle the successful response
+            $responseBody = json_decode($response->getBody(), true);
+            return $responseBody;
+    
+        } catch (RequestException $e) {
+            // Handle the error response
+            if ($e->hasResponse()) {
+                $errorResponse = $e->getResponse();
+                return [
+                    'error' => true,
+                    'message' => json_decode($errorResponse->getBody(), true),
+                    'status' => $errorResponse->getStatusCode(),
+                ];
+            }
+    
+            return [
+                'error' => true,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public static function getAccounts($oauthToken, $subscriptionId, $timestamp,$uuid) {
+        $client = new Client();
+    
+        try {
+            // Send the GET request
+            $response = $client->get('https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/accounts', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . $oauthToken,
+                    'subscriptionId' => $subscriptionId,
+                    'journeyId' => $uuid,
+                    'timestamp' => $timestamp,
+                ],
             ]);
     
             // Handle the successful response
