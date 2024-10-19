@@ -103,37 +103,7 @@ const Shop = () => {
   };
 
   const buyByBOC = async (product) => {
-    try {
-      const tokenUrl = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/token";
-      const client_id = "4c13ca5d5234603dfb3228c381d7d3ac";
-      const client_secret = "4c13ca5d5234603dfb3228c381d7d3ac";
-  
-      const requestBody = new URLSearchParams();
-      requestBody.append("grant_type", "client_credentials");
-      requestBody.append("client_id", client_id);
-      requestBody.append("client_secret", client_secret);
-      requestBody.append("scope", "TPPOAuth2Security");
-  
-      const response = await axios.post(tokenUrl, requestBody.toString(), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-  
-      const accessToken = response.data.access_token;
-  
-      if (!accessToken) {
-        throw new Error("No access token received.");
-      }
-  
-      alert(`Proceeding to buy ${product.name} by BOC with token: ${accessToken}`);
-  
-      // Example API call using the token can go here
-  
-    } catch (error) {
-      console.error("Error fetching token:", error.response ? error.response.data : error.message);
-      alert(`Failed to proceed with BOC purchase: ${error.message}`);
-    }
+      window.location.href = `/?price=${product.price}&name=${product.name}`
   };
   
 

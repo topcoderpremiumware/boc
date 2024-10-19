@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('messages/{user_id}', [ChatController::class, 'message']);
+Route::get('userInfo', [ChatController::class, 'getBocData']);

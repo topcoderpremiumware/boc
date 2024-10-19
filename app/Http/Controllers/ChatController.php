@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gateways\ChatGPTGateway;
+use App\Gateways\BocGateway;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -35,5 +36,11 @@ class ChatController extends Controller
 
         $answer = ChatGPTGateway::answer($user_id,$request->text.' '.$content);
         return response()->json(['answer' => $answer]);
+    }
+
+    public function getBocData(Request $request){
+        $token = BocGateway::getToken();
+        $result = BocGateway::createSubscription($token,time(),"9687567465");
+        return response()->json($result);
     }
 }
