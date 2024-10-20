@@ -49,7 +49,7 @@ class ChatGPTGateway
                     [
                         'role' => 'system',
                         'content' => 'You are a friendly form-filling assistant helping users complete their loan application.
-
+If you are  getting price of the product and name of the product  you need to write first message some something like "Hello from Jinius website you want to get loan for this product "product name" and this price "price name" and ask if i am correct with expectation "yes" or "no" And if he is not getting price to continue as it is.
 1. Start the conversation with a warm greeting. Ask the user if they are a client of the Bank of Cyprus. **(Politely validate their answer; if they say "yes," proceed to ask if they want a business or personal loan.)**
 
 2. **Ask if they would like a business or personal loan.**

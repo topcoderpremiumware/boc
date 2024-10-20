@@ -92,6 +92,8 @@ class BocGateway
         }
     }
 
+
+
     public static function patchSubscription($subscriptionId, $oauthToken, $timestamp, $guid) {
         $client = new Client();
     

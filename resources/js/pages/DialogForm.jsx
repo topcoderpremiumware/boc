@@ -32,19 +32,49 @@ export function DialogForm() {
       localStorage.setItem('userId',randomId)
       setUserId(randomId)
     }
-    setPrice(searchParams.get("price"))
     setName(searchParams.get("name"))
+    setPrice(searchParams.get("price"))
     getUserData()
   }, [])
 
+  useEffect(() => {
+    if(price){
+      sendJiniusInfo(`We have product with name ${searchParams.get("name")} and the product price is ${searchParams.get("price")}`)
+    }
+  }, [price])
+
+
   const getUserData = () => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
-      setUserData(response.data)
-      console.log(response.data)
+     axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
+    const authorizationUrl = response.data.authorizationUrl;
+    window.location.href = authorizationUrl; // Redirect from frontend
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  //   axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
+  //     setUserData(response.data)
+  //     console.log(response.data)
+  //   }
+  // ).catch(error => {
+  //     console.log(error)
+  //   })
+  }
+
+  const sendJiniusInfo = (info) => {
+    let formData = new FormData()
+    formData.append('text', info)
+    axios.post(`${import.meta.env.VITE_API_URL}/api/messages/${userId}`, formData,{
+      headers: {
+
+      }
+    }).then(response => {
+      setMessages(prev => ([response.data.answer, ...prev]))
     }).catch(error => {
       console.log(error)
     })
   }
+
 
   const sendMessage = () => {
     setLoading(true)
@@ -66,6 +96,7 @@ export function DialogForm() {
       console.log(error)
     })
   }
+
 
   return (<Card sx={{margin: "10px 0"}}>
     <Box height="calc(100vh - 20px)" display="flex" flexDirection="column">
