@@ -22,6 +22,7 @@ export function DialogForm() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [price, setPrice] = useState(null)
   const [name, setName] = useState(null)
+  const [code, setCode] = useState(null)
   const [userData, setUserData] = useState(null)
 
   useEffect(() => {
@@ -34,33 +35,51 @@ export function DialogForm() {
     }
     setName(searchParams.get("name"))
     setPrice(searchParams.get("price"))
-    getUserData()
+    setCode(searchParams.get("code"))
+    if(searchParams.get("price")){getUserData()}
+    
   }, [])
 
   useEffect(() => {
     if(price){
+      localStorage.setItem('price',price)
+      localStorage.setItem('name',name)
       sendJiniusInfo(`We have product with name ${searchParams.get("name")} and the product price is ${searchParams.get("price")}`)
     }
   }, [price])
 
+  useEffect(() => {
+    if(code){
+      sendJiniusInfo(`We have code so user logged in trough BOC`)
+      getUserDataAfterLogin();
+    }
+  }, [code])
 
   const getUserData = () => {
-     axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
-    const authorizationUrl = response.data;
-    console.log('authorizationUrl', authorizationUrl)
-    // window.open(authorizationUrl, '_blank');
-  })
-  .catch(error => {
-    console.error(error);
-  });
-  //   axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
-  //     setUserData(response.data)
-  //     console.log(response.data)
-  //   }
-  // ).catch(error => {
-  //     console.log(error)
-  //   })
+        axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
+          const authorizationUrl = response.data.authorizationUrl;
+          const subscriptionId = response.data.subscriptionId;
+          localStorage.setItem('subscriptionId',subscriptionId)
+          console.log('authorizationUrl', authorizationUrl)
+          // window.open(authorizationUrl, '_blank');
+          window.location.href = authorizationUrl;
+        })
+        .catch(error => {
+          console.error(error);
+        });
   }
+  const getUserDataAfterLogin = () => {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/userInfoAfterLogin`, {
+      params: { authCode: code, subscriptionId:localStorage.getItem('subscriptionId')}  // Passing authCode as a query parameter
+    }).then(response => {
+      const patchedSubscriptionId = response.data;
+      console.log('patchedSubscriptionId', patchedSubscriptionId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
 
   const sendJiniusInfo = (info) => {
     let formData = new FormData()

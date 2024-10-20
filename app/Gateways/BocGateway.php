@@ -93,59 +93,144 @@ class BocGateway
     }
 
 
-
-    public static function patchSubscription($subscriptionId, $oauthToken, $timestamp, $guid) {
-        $client = new Client();
+    public static function requestToken($authCode){
+        $clientId = '4c13ca5d5234603dfb3228c381d7d3ac';
+        $clientSecret = '405141d105a140cc3afe5ada3b543bdd';
     
-        // Data to be sent in the PATCH request
+        // Prepare the request data
         $data = [
-            "accounts" => [
-                "transactionHistory" => true,
-                "balance" => true,
-                "details" => true,
-                "checkFundsAvailability" => true,
-            ],
-            "payments" => [
-                "limit" => 50,
-                "currency" => "EUR", // Replace "string" with the actual currency
-                "amount" => 50,
-            ],
+            'grant_type' => 'authorization_code',
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'code' => $authCode, // The authorization code
+            'scope' => 'UserOAuth2Security',
         ];
     
-        try {
-            // Send the PATCH request
-            $response = $client->patch("https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/subscriptions/{$subscriptionId}", [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $oauthToken,
-                    'Content-Type' => 'application/json',
-                    'journeyId' => $guid,
-                    'timestamp' => $timestamp,
-                ],
-                'json' => $data, // Use 'json' to automatically set Content-Type to application/json
-            ]);
+        // Send the POST request
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ])->asForm()->post('https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/token', $data);
     
+        // Check the response status
+        if ($response->successful()) {
             // Handle the successful response
-            $responseBody = json_decode($response->getBody(), true);
-            return $responseBody;
+            $accessToken = $response->json()['access_token'];
+            return $accessToken;
+        } else {
+         // Handle the error response
+         $statusCode = $response->status(); // HTTP status code
+         $errorMessage = $response->json()['error'] ?? 'An error occurred'; // Error message
+         $errorDescription = $response->json()['error_description'] ?? 'No error description provided';
+ 
+         // Return a detailed error message with status code, error, and description
+         return [
+             'status' => $statusCode,
+             'error' => $errorMessage,
+             'description' => $errorDescription
+         ];
+        }
+    }
+
+
+    public static function updateSubscriptionData($subscriptionId, $oauthCode, $guid, $timestamp)
+    {
+        // Construct the URL with the subscription ID
+        $url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/subscriptions/{$subscriptionId}";
     
-        } catch (RequestException $e) {
+        // Send the GET request
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer {$oauthCode}",
+            'Content-Type' => 'application/json',
+            'journeyid' => $guid,
+            'timestamp' => $timestamp,
+        ])->get($url);
+    
+        // Check the response status
+        if ($response->successful()) {
+            // Handle the successful response
+            return $response->json()[0]['subscriptionId'];
+        } else {
             // Handle the error response
-            if ($e->hasResponse()) {
-                $errorResponse = $e->getResponse();
-                return [
-                    'error' => true,
-                    'message' => json_decode($errorResponse->getBody(), true),
-                    'status' => $errorResponse->getStatusCode(),
-                ];
-            }
-    
             return [
-                'error' => true,
-                'message' => $e->getMessage(),
+                'status' => $response->status(),
+                'error' => $response->json()['error'] ?? 'An error occurred',
+                'description' => $response->json()['error_description'] ?? 'No error description provided',
             ];
         }
     }
 
+
+
+    public static function patchSubscription($subscriptionId, $oauthCode, $guid, $timestamp){
+    // Construct the URL with the subscription ID
+    $url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/subscriptions/{$subscriptionId}";
+
+    // Prepare the request data
+    $data = [
+        'accounts' => [
+            'transactionHistory' => true,
+            'balance' => true,
+            'details' => true,
+            'checkFundsAvailability' => true,
+        ],
+        'payments' => [
+            'limit' => 50,
+            'currency' => 'string', // Replace with the actual currency
+            'amount' => 50,
+        ],
+    ];
+
+    // Send the PATCH request
+    $response = Http::withHeaders([
+        'Authorization' => "Bearer {$oauthCode}",
+        'Content-Type' => 'application/json',
+        'journeyId' => $guid,
+        'timestamp' => $timestamp,
+    ])->patch($url, $data);
+
+    // Check the response status
+    if ($response->successful()) {
+        // Handle the successful response
+        $result = $response->json();
+        return ['subscriptionId'=> $result['subscriptionId'],'accountId'=> $result['selectedAccounts'][0]['accountId']];
+    } else {
+        // Handle the error response
+        return [
+            'status' => $response->status(),
+            'error' => $response->json()['error'] ?? 'An error occurred',
+            'description' => $response->json()['error_description'] ?? 'No error description provided',
+        ];
+    }
+}
+
+public static function getAccountDetails($accountNumber, $oauthCode, $subscriptionId, $uuid, $timestamp)
+{
+    // Define the URL for the API endpoint
+    $url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/v1/accounts/{$accountNumber}";
+
+    // Send the GET request
+    $response = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer {$oauthCode}",
+        'subscriptionId' => $subscriptionId,
+        'journeyId' => $uuid,
+        'timestamp' => $timestamp,
+    ])->get($url);
+
+    // Check the response status
+    if ($response->successful()) {
+        // Handle the successful response
+        return $response->json();
+    } else {
+        // Handle the error response
+        return [
+            'status' => $response->status(),
+            'error' => $response->json()['error'] ?? 'An error occurred',
+            'description' => $response->json()['error_description'] ?? 'No error description provided',
+        ];
+    }
+}
     public static function getAccounts($oauthToken, $subscriptionId, $timestamp,$uuid) {
         $client = new Client();
     
