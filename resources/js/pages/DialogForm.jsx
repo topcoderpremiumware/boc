@@ -46,8 +46,9 @@ export function DialogForm() {
 
   const getUserData = () => {
      axios.get(`${import.meta.env.VITE_API_URL}/api/userInfo`).then(response => {
-    const authorizationUrl = response.data.authorizationUrl;
-    window.location.href = authorizationUrl; // Redirect from frontend
+    const authorizationUrl = response.data;
+    console.log('authorizationUrl', authorizationUrl)
+    // window.open(authorizationUrl, '_blank');
   })
   .catch(error => {
     console.error(error);
