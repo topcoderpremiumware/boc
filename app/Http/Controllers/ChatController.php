@@ -45,7 +45,7 @@ class ChatController extends Controller
     
     // Prepare the authorization URL with the subscription ID
     $clientId = '4c13ca5d5234603dfb3228c381d7d3ac'; // Replace with your actual client ID
-    $redirectUri = 'http://localhost:8000/'; // Replace with your actual redirect URI
+    $redirectUri = 'https://boc.vasilkoff.info/'; // Replace with your actual redirect URI
     $scope = 'UserOAuth2Security';
 
     // Build the authorization URL
