@@ -7,7 +7,7 @@ const products = [
     name: "Samsonite Winfield 2 Hardside Luggage",
     price: 199.99,
     oldPrice: 249.99,
-    img: "https://m.media-amazon.com/images/I/81clKJPeHtL._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/71Hdzva20uL.jpg", // Updated
     discount: 20,
     colors: ["black", "silver", "blue"],
   },
@@ -16,7 +16,7 @@ const products = [
     name: "Levi's Men's 501 Original Fit Jeans",
     price: 49.99,
     oldPrice: 59.99,
-    img: "https://m.media-amazon.com/images/I/81z1SQ4J3cL._AC_UL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/415aQwqvBQL._AC_.jpg", // Updated
     discount: 16,
     colors: ["blue", "black", "gray"],
   },
@@ -25,7 +25,7 @@ const products = [
     name: "Nike Air Max 270",
     price: 149.95,
     oldPrice: 170.00,
-    img: "https://m.media-amazon.com/images/I/61cS0cF7yXL._AC_UL1500_.jpg", // Updated
+    img: "https://www.jdsports.cy/2667732-product_horizontal/nike-w-air-max-270.jpg", // Updated
     discount: 12,
     colors: ["white", "black", "red"],
   },
@@ -34,7 +34,7 @@ const products = [
     name: "Apple MacBook Air 13-inch",
     price: 999.00,
     oldPrice: 1099.00,
-    img: "https://m.media-amazon.com/images/I/81Yj49MZDhL._AC_SL1500_.jpg", // Updated
+    img: "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/mba13-midnight-select-202402?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1708367688034", // Updated
     discount: 9,
     colors: ["silver", "space gray", "gold"],
   },
@@ -43,7 +43,7 @@ const products = [
     name: "Sony WH-1000XM5 Wireless Headphones",
     price: 349.99,
     oldPrice: 399.99,
-    img: "https://m.media-amazon.com/images/I/81sB1l4wQjL._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/61ULAZmt9NL.jpg", // Updated
     discount: 12,
     colors: ["black", "silver"],
   },
@@ -52,7 +52,7 @@ const products = [
     name: "Canon EOS Rebel T7 DSLR Camera",
     price: 479.00,
     oldPrice: 549.00,
-    img: "https://m.media-amazon.com/images/I/81qHW7bLl5L._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/71Is-Zv6A0L._AC_UF894,1000_QL80_.jpg", // Updated
     discount: 13,
     colors: ["black"],
   },
@@ -61,7 +61,7 @@ const products = [
     name: "Fossil Men's Nate Stainless Steel Chronograph Watch",
     price: 129.99,
     oldPrice: 149.99,
-    img: "https://m.media-amazon.com/images/I/81aP+63ibcL._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/71kbRVr8YfL._AC_UY900_.jpg", // Updated
     discount: 13,
     colors: ["black", "silver"],
   },
@@ -70,7 +70,7 @@ const products = [
     name: "Dyson V11 Torque Drive Cordless Vacuum Cleaner",
     price: 599.99,
     oldPrice: 699.99,
-    img: "https://m.media-amazon.com/images/I/61ZRmB9DqUL._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/61-K1LeoE5L.jpg", // Updated
     discount: 14,
     colors: ["blue"],
   },
@@ -79,7 +79,7 @@ const products = [
     name: "Samsung 55-inch Class QLED Q60T Smart TV",
     price: 497.99,
     oldPrice: 599.99,
-    img: "https://m.media-amazon.com/images/I/81Hhrm63NCL._AC_SL1500_.jpg", // Updated
+    img: "https://m.media-amazon.com/images/I/71RspW4qsqL.jpg", // Updated
     discount: 17,
     colors: ["black"],
   },
@@ -88,7 +88,7 @@ const products = [
     name: "Adidas Ultraboost 21 Running Shoes",
     price: 179.95,
     oldPrice: 200.00,
-    img: "https://m.media-amazon.com/images/I/81U3FZ1EbFL._AC_SL1500_.jpg", // Updated
+    img: "https://www.runningshoesguru.com/wp-content/uploads/2021/02/Adidas-Ultraboost-21-IMG_1791.jpeg", // Updated
     discount: 10,
     colors: ["white", "black", "gray"],
   },
@@ -120,10 +120,11 @@ const Shop = () => {
             textAlign: "center",
           }}
         >
-          <img
+         <img
             src={product.img}
             alt={product.name}
             style={{ width: "100%", height: "150px", objectFit: "contain" }}
+            onError={() => console.error(`Image failed to load: ${product.img}`)} // Log error if image fails to load
           />
           <h3>{product.name}</h3>
           {product.oldPrice && (
